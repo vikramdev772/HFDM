@@ -1,0 +1,74 @@
+# Health Check
+curl http://localhost:3000/health
+
+# Authentication
+# Login
+curl -X POST http://localhost:3000/api/login -H "Content-Type: application/json" -d '{"email":"hospital_manager@xyz.com","password":"Password@2025"}'
+
+# Store the token from login response
+TOKEN="your_token_here"
+
+# Patient Endpoints
+# Get all patients
+curl http://localhost:3000/api/patients \
+  -H "Authorization: Bearer $TOKEN"
+
+curl -X GET http://localhost:3000/api/patients -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiZW1haWwiOiJob3NwaXRhbF9tYW5hZ2VyQHh5ei5jb20iLCJyb2xlIjoiTUFOQUdFUiIsImlhdCI6MTczNjM1MDYxNiwiZXhwIjoxNzM2NDM3MDE2fQ.O56bGz9iom4gQSSvPI9f7koZqLshthFuVNhyKHVtVbE"
+
+
+# Get patient by ID
+curl http://localhost:3000/api/patients/1 \
+  -H "Authorization: Bearer $TOKEN"
+
+# Create new patient
+curl -X POST http://localhost:3000/api/patients \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe",
+    "roomNumber": "201",
+    "bedNumber": "A",
+    "floorNumber": "2",
+    "age": 45,
+    "gender": "Male",
+    "contactInfo": "+1234567890",
+    "emergencyContact": "+1987654321",
+    "diseases": ["Diabetes", "Hypertension"],
+    "allergies": ["Peanuts", "Shellfish"]
+  }'
+
+# Update patient
+curl -X PUT http://localhost:3000/api/patients/1 \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe Updated",
+    "contactInfo": "+1234567899"
+  }'
+
+# Delete patient
+curl -X DELETE http://localhost:3000/api/patients/1 \
+  -H "Authorization: Bearer $TOKEN"
+
+curl -X DELETE http://localhost:3000/api/patients/2 -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiZW1haWwiOiJob3NwaXRhbF9tYW5hZ2VyQHh5ei5jb20iLCJyb2xlIjoiTUFOQUdFUiIsImlhdCI6MTczNjM1MjYxMSwiZXhwIjoxNzM2NDM5MDExfQ.f4daF8LHfAidWFthNWrqSBre8gMNtQonvdglsY3lXW0" -H "Content-Type: application/json"
+
+
+# Diet Chart Endpoints
+# Get all diet charts
+curl http://localhost:3000/api/diet-charts \
+  -H "Authorization: Bearer $TOKEN"
+
+# Create diet chart
+curl -X POST http://localhost:3000/api/diet-charts \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "patientId": 1,
+    "mealType": "MORNING",
+    "ingredients": ["Oatmeal", "Fresh Fruits", "Sugar-free Yogurt"],
+    "instructions": ["
+
+
+
+
+    {"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiZW1haWwiOiJob3NwaXRhbF9tYW5hZ2VyQHh5ei5jb20iLCJyb2xlIjoiTUFOQUdFUiIsImlhdCI6MTczNjM1MDYxNiwiZXhwIjoxNzM2NDM3MDE2fQ.O56bGz9iom4gQSSvPI9f7koZqLshthFuVNhyKHVtVbE"}

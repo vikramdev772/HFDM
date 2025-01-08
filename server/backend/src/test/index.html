@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fetch API Test</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #00FF00;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    button {
+      background-color: #333;
+      color: #00FF00;
+      padding: 10px 20px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 20px auto;
+      display: block;
+    }
+    button:hover {
+      background-color: #444;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    table, th, td {
+      border: 1px solid #00FF00;
+    }
+    th, td {
+      padding: 10px;
+    }
+    th {
+      background-color: #333;
+    }
+    td {
+      word-wrap: break-word;
+      max-width: 200px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Fetch Patient Data</h1>
+  <button id="fetchButton">Fetch Data</button>
+
+  <table id="patientsTable" style="display:none;">
+    <thead>
+      <tr>
+        <th>Patient ID</th>
+        <th>Name</th>
+        <th>Room Number</th>
+        <th>Bed Number</th>
+        <th>Age</th>
+        <th>Gender</th>
+        <th>Diseases</th>
+        <th>Allergies</th>
+        <th>Contact Info</th>
+        <th>Emergency Contact</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    document.getElementById('fetchButton').addEventListener('click', function() {
+      fetch('http://localhost:3000/api/patients', {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiZW1haWwiOiJob3NwaXRhbF9tYW5hZ2VyQHh5ei5jb20iLCJyb2xlIjoiTUFOQUdFUiIsImlhdCI6MTczNjM1MDYxNiwiZXhwIjoxNzM2NDM3MDE2fQ.O56bGz9iom4gQSSvPI9f7koZqLshthFuVNhyKHVtVbE'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data && Array.isArray(data)) {
+          const tableBody = document.querySelector('#patientsTable tbody');
+          tableBody.innerHTML = ''; // Clear previous data
+          data.forEach(patient => {
+            const row = document.createElement('tr');
+            
+            // Convert diseases and allergies arrays to a comma-separated string
+            const diseases = patient.diseases.join(', ') || 'None';
+            const allergies = patient.allergies.join(', ') || 'None';
+
+            row.innerHTML = `
+              <td>${patient.id}</td>
+              <td>${patient.name}</td>
+              <td>${patient.roomNumber}</td>
+              <td>${patient.bedNumber}</td>
+              <td>${patient.age}</td>
+              <td>${patient.gender}</td>
+              <td>${diseases}</td>
+              <td>${allergies}</td>
+              <td>${patient.contactInfo}</td>
+              <td>${patient.emergencyContact}</td>
+            `;
+            tableBody.appendChild(row);
+          });
+          document.getElementById('patientsTable').style.display = 'table';
+        } else {
+          console.log('No data or incorrect format');
+        }
+      })
+      .catch(error => console.log('Error:', error));
+    });
+  </script>
+
+</body>
+</html>
