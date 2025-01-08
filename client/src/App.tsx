@@ -11,7 +11,6 @@ function App() {
     <Router>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        
         {/* Hospital Food Manager Routes */}
         <Route path="/manager/dashboard" element={<ManagerDashboard />} />
         <Route path="/manager/patient/:id" element={<PatientDetails />} />
