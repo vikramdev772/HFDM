@@ -1,5 +1,4 @@
-
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction, RequestHandler } from 'express'; 
 import { login } from '../controllers/auth.controller';
 import { patientController } from '../controllers/patient.controller';
 import { dietChartController } from '../controllers/dietChart.controller';
@@ -9,23 +8,79 @@ import { verifyToken, checkRole } from '../middlewares/auth.middleware';
 const router = express.Router();
 
 // Auth routes
-router.post('/login', login);
+router.post('/login', login as RequestHandler);
 
 // Patient routes
-router.get('/patients', verifyToken, checkRole(['MANAGER', 'PANTRY']), patientController.getAll);
-router.get('/patients/:id', verifyToken, checkRole(['MANAGER', 'PANTRY']), patientController.getById);
-router.post('/patients', verifyToken, checkRole(['MANAGER']), patientController.create);
-router.put('/patients/:id', verifyToken, checkRole(['MANAGER']), patientController.update);
-router.delete('/patients/:id', verifyToken, checkRole(['MANAGER']), patientController.delete);
+router.get(
+  '/patients', 
+  verifyToken as RequestHandler, 
+  checkRole(['MANAGER', 'PANTRY']) as RequestHandler, 
+  patientController.getAll as RequestHandler
+);
+
+router.get(
+  '/patients/:id', 
+  verifyToken as RequestHandler, 
+  checkRole(['MANAGER', 'PANTRY']) as RequestHandler, 
+  patientController.getById as RequestHandler
+);
+
+router.post(
+  '/patients', 
+  verifyToken as RequestHandler, 
+  checkRole(['MANAGER']) as RequestHandler, 
+  patientController.create as RequestHandler
+);
+
+router.put(
+  '/patients/:id', 
+  verifyToken as RequestHandler, 
+  checkRole(['MANAGER']) as RequestHandler, 
+  patientController.update as RequestHandler
+);
+
+router.delete(
+  '/patients/:id', 
+  verifyToken as RequestHandler, 
+  checkRole(['MANAGER']) as RequestHandler, 
+  patientController.delete as RequestHandler
+);
 
 // Diet Chart routes
-router.get('/diet-charts', verifyToken, checkRole(['MANAGER', 'PANTRY']), dietChartController.getAll);
-router.post('/diet-charts', verifyToken, checkRole(['MANAGER']), dietChartController.create);
-router.put('/diet-charts/:id', verifyToken, checkRole(['MANAGER']), dietChartController.update);
+router.get(
+  '/diet-charts', 
+  verifyToken as RequestHandler, 
+  checkRole(['MANAGER', 'PANTRY']) as RequestHandler, 
+  dietChartController.getAll as RequestHandler
+);
+
+router.post(
+  '/diet-charts', 
+  verifyToken as RequestHandler, 
+  checkRole(['MANAGER']) as RequestHandler, 
+  dietChartController.create as RequestHandler
+);
+
+router.put(
+  '/diet-charts/:id', 
+  verifyToken as RequestHandler, 
+  checkRole(['MANAGER']) as RequestHandler, 
+  dietChartController.update as RequestHandler
+);
 
 // Delivery routes
-router.post('/deliveries/assign', verifyToken, checkRole(['MANAGER', 'PANTRY']), deliveryController.assignDelivery);
-router.put('/deliveries/:id/complete', verifyToken, checkRole(['DELIVERY']), deliveryController.markComplete);
+router.post(
+  '/deliveries/assign', 
+  verifyToken as RequestHandler, 
+  checkRole(['MANAGER', 'PANTRY']) as RequestHandler, 
+  deliveryController.assignDelivery as RequestHandler
+);
+
+router.put(
+  '/deliveries/:id/complete', 
+  verifyToken as RequestHandler, 
+  checkRole(['DELIVERY']) as RequestHandler, 
+  deliveryController.markComplete as RequestHandler
+);
 
 export default router;
-
