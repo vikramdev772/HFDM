@@ -45,20 +45,43 @@ export default function DeliveryTracking() {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No authentication token found');
 
-      const response = await fetch('https://hfdm.onrender.com/api/deliveries', {
+      const response = await fetch('https://hfdm.onrender.com/api/manager/deliveries', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
 
-      if (!response.ok) throw new Error('Failed to fetch deliveries');
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('Delivery tracking endpoint not found. Please check the API configuration.');
+        }
+        throw new Error(`Failed to fetch deliveries: ${response.statusText}`);
+      }
       
       const data = await response.json();
       setDeliveries(data);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'An error occurred while fetching deliveries';
+      const message = err instanceof Error 
+        ? err.message 
+        : 'Unable to connect to the delivery tracking service. Please try again later.';
       setError(message);
+      // Use mock data when API fails in development
+      if (process.env.NODE_ENV === 'development') {
+        setDeliveries([
+          {
+            id: 1,
+            patient: "John Doe",
+            room: "201",
+            meal: "Morning",
+            items: ["Oatmeal", "Fresh Fruits"],
+            status: "Delivered",
+            deliveryTime: "08:30 AM",
+            assignedTo: "Mike Wilson"
+          },
+          
+        ]);
+      }
       toast({
         variant: "destructive",
         title: "Error",
