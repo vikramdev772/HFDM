@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/Label";
+import { Label } from "@/components/ui/label"; // Fixed import path case
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from 'lucide-react';
 
@@ -212,3 +212,4 @@ export function EditPatientModal({ patient, isOpen, onClose, onPatientUpdated }:
     </Dialog>
   );
 }
+
