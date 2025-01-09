@@ -1,23 +1,18 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Building2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import API_URL from '@/api/BASE_URL';
 
-const VALID_CREDENTIALS = {
-  'hospital_manager@xyz.com': { password: 'Password@2025', role: 'manager' },
-  'hospital_pantry@xyz.com': { password: 'Password@2025', role: 'pantry' },
-  'hospital_delivery@xyz.com': { password: 'Password@2025', role: 'delivery' }
-} as const;
-
-type Role = 'manager' | 'pantry' | 'delivery';
+type Role = 'MANAGER' | 'PANTRY' | 'DELIVERY';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<Role>('manager');
+  const [role, setRole] = useState<Role>('MANAGER');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,27 +21,44 @@ export default function LoginPage() {
     setError('');
     setIsLoading(true);
 
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const credentials = VALID_CREDENTIALS[email as keyof typeof VALID_CREDENTIALS];
-    
-    if (!credentials || credentials.password !== password || credentials.role !== role) {
-      setError('Invalid credentials or role mismatch');
+      if (!response.ok) {
+        throw new Error('Invalid credentials');
+      }
+
+      const data = await response.json();
+      
+      // Store the token in localStorage
+      localStorage.setItem('token', data.token);
+
+      // Assuming the API returns the user's role, otherwise we'll use the selected role
+      const userRole = data.role || role;
+
+      switch (userRole) {
+        case 'MANAGER':
+          navigate('/manager/dashboard');
+          break;
+        case 'PANTRY':
+          navigate('/pantry/dashboard');
+          break;
+        case 'DELIVERY':
+          navigate('/delivery/dashboard');
+          break;
+        default:
+          setError('Invalid role');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
       setIsLoading(false);
-      return;
-    }
-
-    switch (role) {
-      case 'manager':
-        navigate('/manager/dashboard');
-        break;
-      case 'pantry':
-        navigate('/pantry/dashboard');
-        break;
-      case 'delivery':
-        navigate('/delivery/dashboard');
-        break;
     }
   };
 
@@ -85,9 +97,9 @@ export default function LoginPage() {
                 className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 disabled={isLoading}
               >
-                <option value="manager">Hospital Manager</option>
-                <option value="pantry">Pantry Staff</option>
-                <option value="delivery">Delivery Personnel</option>
+                <option value="MANAGER">Hospital Manager</option>
+                <option value="PANTRY">Pantry Staff</option>
+                <option value="DELIVERY">Delivery Personnel</option>
               </select>
             </div>
 
@@ -159,3 +171,4 @@ export default function LoginPage() {
     </motion.div>
   );
 }
+
